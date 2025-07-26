@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 type Comparison = {
   vintedPrice: number;
@@ -9,22 +9,24 @@ type Comparison = {
 };
 
 export default function Home() {
-  const [itemName, setItemName] = useState('');
+  const [itemName, setItemName] = useState("");
   const [comparisonResult, setComparisonResult] = useState<Comparison | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Fonction pour récupérer les prix sur Vinted via ta route API
   const fetchVintedPrice = async (query: string): Promise<number> => {
     const res = await fetch(`/api/vinted-search?q=${encodeURIComponent(query)}`);
-    if (!res.ok) throw new Error('Erreur API Vinted');
+    if (!res.ok) throw new Error("Erreur API Vinted");
     const data = await res.json();
-    // On prend le prix le plus bas parmi les résultats
+
+    // data est un tableau d’articles, on prend le prix minimum
     const prices = data.map((item: any) => parseFloat(item.price));
     return prices.length ? Math.min(...prices) : 0;
   };
 
+  // Simulation AliExpress pour l’instant (à remplacer plus tard)
   const simulateAliexpressPrice = (): number => {
-    // Simulation simple, à remplacer par API réelle plus tard
     return parseFloat((Math.random() * 20 + 5).toFixed(2));
   };
 
@@ -44,7 +46,7 @@ export default function Home() {
   };
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
       <h1>Comparateur Vinted / AliExpress</h1>
 
       <input
@@ -52,16 +54,16 @@ export default function Home() {
         placeholder="Nom de l'article"
         value={itemName}
         onChange={(e) => setItemName(e.target.value)}
-        style={{ marginRight: '1rem', padding: '0.5rem' }}
+        style={{ marginRight: "1rem", padding: "0.5rem" }}
       />
       <button onClick={handleCompare} disabled={loading || !itemName.trim()}>
-        {loading ? 'Recherche...' : 'Comparer'}
+        {loading ? "Recherche..." : "Comparer"}
       </button>
 
-      {error && <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>}
+      {error && <p style={{ color: "red", marginTop: "1rem" }}>{error}</p>}
 
       {comparisonResult && (
-        <div style={{ marginTop: '1rem' }}>
+        <div style={{ marginTop: "1rem" }}>
           <p>Prix Vinted : {comparisonResult.vintedPrice} €</p>
           <p>Prix AliExpress (simulé) : {comparisonResult.aliexpressPrice} €</p>
           <p>Profit potentiel : {comparisonResult.profit} €</p>
